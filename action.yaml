@@ -1,0 +1,30 @@
+name: 'Uses Private'
+description: ''
+inputs:
+  token:
+    description: 'Token'
+    required: true
+  repository:
+    description: 'Repository'
+    required: true
+  command:
+    description: 'Command'
+    default: 'echo -n'
+  
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: |-
+        org_name=$(echo ${{ inputs.repository }}    | awk -F '/|@' '{print $1}')
+        repo_name=$(echo ${{ inputs.repository }}   | awk -F '/|@' '{print $2}')
+        branch_name=$(echo ${{ inputs.repository }} | awk -F '/|@' '{print $3}')
+        
+        cd ../ && \
+        rm -rf ${repo_name} && \
+        git clone --depth=1 -b ${branch_name} https://${{ inputs.token }}@github.com/${org_name}/${repo_name}
+        cd ${repo_name}
+        (
+             ${{ inputs.command }}
+        )
+        cd .. && rm -rf ${repo_name}
