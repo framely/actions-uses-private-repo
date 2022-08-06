@@ -1,0 +1,16 @@
+---
+name: Test
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: framely/actions-uses-private-repo@v1
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          repository: framely/actions-framely-init@main
+          command: |-
+            pwd
+      - uses: ./../actions-framely-init
